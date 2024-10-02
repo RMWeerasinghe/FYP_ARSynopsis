@@ -34,7 +34,7 @@ class Sentence:
         self._cluster = -1
     
     def set_embedding(self,embedding) -> None:
-        self._embeding = embedding
+        self._embedding = embedding
     
     def set_cluster_label(self,label) -> None:
         self._cluster = label
