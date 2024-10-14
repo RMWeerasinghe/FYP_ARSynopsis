@@ -7,6 +7,23 @@ from transformers import BertTokenizer, BertModel
 import torch.nn as nn
 from sentence_transformers import SentenceTransformer
 
+
+# sentence class
+class Sentence:
+  def __init__(self,id,text,embeddings):
+    self.id = id
+    self.text = text
+    self.embeddings = embeddings
+
+  def get_id(self):
+    return self.id
+
+  def get_text(self):
+    return self.text
+
+  def get_embedding(self):
+    return self.embeddings
+
 class DocumentLevelPositionalEncoding(nn.Module):
     def __init__(self, d_model, max_sentences=5000):
         """
@@ -77,3 +94,83 @@ def add_positional_encoding_to_embeddings(bert_model, doc_pos_encoder, inputs):
         sentence_embeddings_with_pos_encoding.append(cls_embedding)
 
     return sentence_embeddings_without_pos_encoding, sentence_embeddings_with_pos_encoding
+
+# This commented function is used when using BERT pretrained model
+# def process_sentences_with_positional_encoding(sentences):
+#     """
+#     Main function to process an array of sentences by:
+#     - Loading BERT model and tokenizer
+#     - Tokenizing sentences
+#     - Applying document-level positional encoding
+#     - Returning sentence embeddings with and without positional encoding
+
+#     Parameters:
+#     sentences: List of sentences to process.
+
+#     Returns:
+#     Tuple containing:
+#       - sentence_embeddings_without_pos_encoding
+#       - sentence_embeddings_with_pos_encoding
+#     """
+#     # Load BERT model and tokenizer
+#     tokenizer, bert_model = load_bert_model_and_tokenizer()
+
+#     # Initialize document-level positional encoder
+#     doc_pos_encoder = DocumentLevelPositionalEncoding(d_model=768)
+
+#     # Tokenize sentences
+#     inputs = tokenize_sentences(sentences, tokenizer)
+
+#     # Process sentences, adding document-level positional encoding
+#     sentence_embeddings_without_pos_encoding, sentence_embeddings_with_pos_encoding = add_positional_encoding_to_embeddings(
+#         bert_model, doc_pos_encoder, inputs
+#     )
+
+#     # Create Sentence objects for each sentence
+#     sentence_objects = []
+#     for idx, sentence in enumerate(sentences):
+#         # Create Sentence object with sentence ID, text, and positional encoded embeddings
+#         sentence_obj = Sentence(id=idx, sentence=sentence, embeddings=sentence_embeddings_with_pos_encoding[idx])
+#         sentence_objects.append(sentence_obj)
+
+#     return sentence_objects
+
+
+
+def process_sentences_with_positional_encoding_updated(sentences):
+    """
+    Main function to process an array of sentences by:
+    - Loading SentenceTransformer model
+    - Tokenizing sentences
+    - Applying document-level positional encoding
+    - Returning sentence embeddings with positional encoding
+    """
+    # Load SentenceTransformer model
+    model = SentenceTransformer('sentence-transformers/xlm-r-bert-base-nli-mean-tokens')
+
+    # Extract sentences from tuples
+    sentence_texts = [sentence for sentence in sentences]
+
+    # Generate sentence embeddings
+    sentence_embeddings = model.encode(sentence_texts, convert_to_tensor=True)
+
+    # Initialize document-level positional encoder
+    doc_pos_encoder = DocumentLevelPositionalEncoding(d_model=sentence_embeddings.shape[1])
+
+    # Apply positional encoding
+    sentence_embeddings_with_pos = []
+
+    # Apply positional encoding and create Sentence objects
+    sentence_objects = []
+
+    for idx, sentence_embedding in enumerate(sentence_embeddings):
+        pos_encoding = doc_pos_encoder(idx).squeeze(0)  # Get positional encoding for current sentence
+        modified_embedding = sentence_embedding + pos_encoding
+
+        sentence_embeddings_with_pos.append(modified_embedding)
+
+        # Create Sentence object with sentence ID, text, and positional encoded embeddings
+        sentence_obj = Sentence(id=idx, text=sentence_texts[idx], embeddings=modified_embedding)
+        sentence_objects.append(sentence_obj)
+
+    return sentence_objects
