@@ -6,7 +6,7 @@ import torch
 from transformers import BertTokenizer, BertModel
 import torch.nn as nn
 from sentence_transformers import SentenceTransformer
-
+import uuid
 
 # sentence class
 class Sentence:
@@ -169,8 +169,11 @@ def process_sentences_with_positional_encoding_updated(sentences):
 
         sentence_embeddings_with_pos.append(modified_embedding)
 
+        # Create a unique UUID for each sentence
+        sentence_id = str(uuid.uuid4())  # Generate a unique UUID and convert it to a string
+
         # Create Sentence object with sentence ID, text, and positional encoded embeddings
-        sentence_obj = Sentence(id=idx, text=sentence_texts[idx], embeddings=modified_embedding)
+        sentence_obj = Sentence(id=sentence_id, text=sentence_texts[idx], embeddings=modified_embedding)
         sentence_objects.append(sentence_obj)
 
     return sentence_objects
