@@ -4,6 +4,8 @@ script to load embeddings
 
 import torch
 from transformers import BertTokenizer, BertModel
+import torch.nn as nn
+from sentence_transformers import SentenceTransformer
 
 class DocumentLevelPositionalEncoding(nn.Module):
     def __init__(self, d_model, max_sentences=5000):
@@ -32,3 +34,21 @@ class DocumentLevelPositionalEncoding(nn.Module):
         sentence_position: Index of the sentence in the document
         """
         return self.pe[:, sentence_position, :]
+
+
+
+def load_bert_model_and_tokenizer():
+    """
+    Loads pre-trained BERT model and tokenizer.
+    Returns both model and tokenizer.
+    """
+    tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+    bert_model = BertModel.from_pretrained('bert-base-uncased')
+    return tokenizer, bert_model
+
+def tokenize_sentences(sentences, tokenizer):
+    """
+    Tokenizes sentences and prepares inputs for BERT.
+    Returns a list of tokenized inputs.
+    """
+    return [tokenizer(sentence, return_tensors='pt', padding=True, truncation=True) for sentence in sentences]
