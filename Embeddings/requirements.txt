@@ -1,0 +1,5 @@
+nltk
+pypdf
+torch
+transformers
+sentence_transformers
