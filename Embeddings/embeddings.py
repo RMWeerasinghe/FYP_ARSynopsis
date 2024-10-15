@@ -6,23 +6,9 @@ import torch
 from transformers import BertTokenizer, BertModel
 import torch.nn as nn
 from sentence_transformers import SentenceTransformer
-import uuid
-
-# sentence class
-class Sentence:
-  def __init__(self,id,text,embeddings):
-    self.id = id
-    self.text = text
-    self.embeddings = embeddings
-
-  def get_id(self):
-    return self.id
-
-  def get_text(self):
-    return self.text
-
-  def get_embedding(self):
-    return self.embeddings
+import sys
+sys.path.insert(0, 'C://GitHub//FYP_ARSynopsis//utils')  # sentence class
+from sentence import Sentence
 
 class DocumentLevelPositionalEncoding(nn.Module):
     def __init__(self, d_model, max_sentences=5000):
@@ -170,10 +156,97 @@ def process_sentences_with_positional_encoding_updated(sentences):
         sentence_embeddings_with_pos.append(modified_embedding)
 
         # Create a unique UUID for each sentence
-        sentence_id = str(uuid.uuid4())  # Generate a unique UUID and convert it to a string
+        sentence_id = idx  # Generate a unique UUID and convert it to a string
 
         # Create Sentence object with sentence ID, text, and positional encoded embeddings
-        sentence_obj = Sentence(id=sentence_id, text=sentence_texts[idx], embeddings=modified_embedding)
+        sentence_obj = Sentence(index = sentence_id, text=sentence_texts[idx])
+        sentence_obj.set_embedding(modified_embedding)
         sentence_objects.append(sentence_obj)
 
     return sentence_objects
+
+
+# Add function to get embeddings without positional embedding
+
+def process_sentences_without_positional_encoding_updated(sentences):
+    """
+    Main function to process an array of sentences by:
+    - Loading SentenceTransformer model
+    - Tokenizing sentences
+    - Returning sentence embeddings with positional encoding
+    """
+    # Load SentenceTransformer model
+    model = SentenceTransformer('sentence-transformers/xlm-r-bert-base-nli-mean-tokens')
+
+    # Extract sentences from tuples
+    sentence_texts = [sentence for sentence in sentences]
+
+    # Generate sentence embeddings
+    sentence_embeddings = model.encode(sentence_texts, convert_to_tensor=True)
+
+    sentence_objects = []
+
+    for idx, sentence_embedding in enumerate(sentence_embeddings):
+
+        # Create a unique UUID for each sentence
+        sentence_id = idx  # Generate a unique UUID and convert it to a string
+
+        # Create Sentence object with sentence ID, text, and embeddings
+        sentence_obj = Sentence(index = sentence_id, text=sentence_texts[idx])
+        sentence_obj.set_embedding(sentence_embedding)
+        sentence_objects.append(sentence_obj)
+
+    return sentence_objects
+
+
+# Embedding creation function for comparative analysis - create two types in one attepmt
+
+def process_sentences_and_encode(sentences):
+    """
+    Main function to process an array of sentences by:
+    - Loading SentenceTransformer model
+    - Tokenizing sentences
+    - Applying document-level positional encoding
+    - Returning sentence embeddings with positional encoding
+    """
+    # Load SentenceTransformer model
+    model = SentenceTransformer('sentence-transformers/xlm-r-bert-base-nli-mean-tokens')
+
+    # Extract sentences from tuples
+    sentence_texts = [sentence for sentence in sentences]
+
+    # Generate sentence embeddings
+    sentence_embeddings = model.encode(sentence_texts, convert_to_tensor=True)
+
+    # Initialize document-level positional encoder
+    doc_pos_encoder = DocumentLevelPositionalEncoding(d_model=sentence_embeddings.shape[1])
+
+    # Apply positional encoding
+    sentence_embeddings_with_pos = []
+
+    # Apply positional encoding and create Sentence objects
+    sentence_objects_pos = []
+    sentence_objects_without_pos = []
+
+    for idx, sentence_embedding in enumerate(sentence_embeddings):
+        pos_encoding = doc_pos_encoder(idx).squeeze(0)  # Get positional encoding for current sentence
+        modified_embedding = sentence_embedding + pos_encoding
+
+        sentence_embeddings_with_pos.append(modified_embedding)
+
+        # Create a unique UUID for each sentence
+        sentence_id = idx  # Generate a unique UUID and convert it to a string
+
+        # Create Sentence object with sentence ID, text, and positional encoded embeddings
+        sentence_obj_pos = Sentence(index = sentence_id, text=sentence_texts[idx])
+        sentence_obj_pos.set_embedding(modified_embedding)
+        sentence_objects_pos.append(sentence_obj_pos)
+
+        sentence_obj_without_pos = Sentence(index = sentence_id, text=sentence_texts[idx])
+        sentence_obj_without_pos.set_embedding(sentence_embedding)
+        sentence_objects_without_pos.append(sentence_obj_without_pos)
+        
+
+    return sentence_objects_without_pos, sentence_objects_pos
+    
+

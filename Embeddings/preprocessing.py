@@ -3,6 +3,7 @@ import nltk
 from pypdf import PdfReader
 
 nltk.download('punkt')
+nltk.download('punkt_tab')
 
 # Function to remove email addresses from text
 def remove_emails(text):
