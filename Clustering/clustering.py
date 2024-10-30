@@ -42,9 +42,9 @@ def reduce_and_cluster(feature_mat:np.array, n_trials:int = 10, n_clusters_min:i
         # Suggest hyperparameters
 
         # Remember to change
-        n_neighbors = trial.suggest_categorical('n_neighbors', list(range(5,15,3)))
+        n_neighbors = trial.suggest_categorical('n_neighbors', list(range(10,25,4)))
         min_dist = trial.suggest_float('min_dist', 0.0, 0.99)
-        n_components = trial.suggest_categorical('n_components', [16,24,32,48])
+        n_components = trial.suggest_categorical('n_components', [48,96,128,256,384])
         num_clusters = trial.suggest_int('n_clusters',n_clusters_min,n_clusters_max)
 
         # Initialize UMAP
@@ -63,9 +63,11 @@ def reduce_and_cluster(feature_mat:np.array, n_trials:int = 10, n_clusters_min:i
         # Perform clustering
         kmeans = KMeans(n_clusters=num_clusters, random_state=42, n_init = "auto")
         cluster_labels = kmeans.fit_predict(embedding)
+
+        cluster_count = len(np.unique(cluster_labels))
         
         # Calculate Silhouette Score
-        if len(np.unique(cluster_labels)) > 1 and len(cluster_labels) > num_clusters:
+        if len(np.unique(cluster_labels)) > 1 and len(cluster_labels) > num_clusters and cluster_count == num_clusters:
             score = silhouette_score(embedding, cluster_labels)
         else:
             score = -1  
