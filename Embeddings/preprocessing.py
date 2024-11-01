@@ -12,8 +12,16 @@ def remove_emails(text):
 
 # Function to remove telephone numbers from text
 def remove_phone_numbers(text):
-    phone_pattern = r'\(?\b[0-9]{3}[-.\s]?[0-9]{3}[-.\s]?[0-9]{4}\b'
-    return re.sub(phone_pattern, '', text)
+    # Regular expression pattern to match phone numbers in various formats
+    phone_pattern = r'''
+        \+?1?[-.\s]?             # Optional country code (+1) with optional separator
+        \(?\b[0-9]{3}\)?[-.\s]?  # Area code (with or without parentheses) and optional separator
+        [0-9]{3}[-.\s]?          # First three digits and optional separator
+        [0-9]{4}\b               # Last four digits
+    '''
+    
+    # re.sub to remove matched phone numbers, re.VERBOSE to allow multiline and comments
+    return re.sub(phone_pattern, '', text, flags=re.VERBOSE)
 
 
 # Function to split text into sentences while avoiding certain splits
