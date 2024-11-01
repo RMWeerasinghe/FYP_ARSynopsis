@@ -74,6 +74,7 @@ def get_all_sentences_array(file_path):
         # Remove any emails and phone numbers from the text for privacy or cleanup
         text = remove_emails(text)
         text = remove_phone_numbers(text)
+        text = remove_urls(text)
 
         # Split the cleaned text into individual sentences
         sentences = split_into_sentences(text)
