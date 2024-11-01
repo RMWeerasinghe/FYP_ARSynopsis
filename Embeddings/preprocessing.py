@@ -29,6 +29,25 @@ def split_into_sentences(text):
 
     return sentences
 
+# Function to remove URLs from text
+def remove_urls(text):
+    # Regular expression pattern for matching URLs
+    url_pattern = r'https?://(?:www\.)?\S+|www\.\S+'
+    
+    # Explanation:
+    # - `https?`: Matches "http" or "https". The `s?` makes the "s" optional.
+    # - `://`: Matches the literal "://" in URLs.
+    # - `(?:www\.)?`: Non-capturing group to match "www." optionally.
+    #     - `www\.`: Matches "www." literally.
+    #     - `?`: Makes the preceding "www." part optional, allowing for URLs with or without "www".
+    # - `\S+`: Matches one or more non-whitespace characters, which covers the rest of the URL.
+    # - `|`: OR operator, allowing for an alternative pattern on the right side.
+    # - `www\.\S+`: Matches URLs starting with "www." but without "http" or "https".
+    # - This combination will match URLs starting with "http://", "https://", or just "www.".
+    
+    # Substitute all URLs in the text with an empty string to remove them
+    return re.sub(url_pattern, '', text)
+
 
 def get_all_sentences_array(file_path):
 
