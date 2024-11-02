@@ -13,8 +13,16 @@ def remove_emails(text):
 
 # Function to remove telephone numbers from text
 def remove_phone_numbers(text):
-    phone_pattern = r'\(?\b[0-9]{3}[-.\s]?[0-9]{3}[-.\s]?[0-9]{4}\b'
-    return re.sub(phone_pattern, '', text)
+    # Regular expression pattern to match phone numbers in various formats
+    phone_pattern = r'''
+        \+?1?[-.\s]?             # Optional country code (+1) with optional separator
+        \(?\b[0-9]{3}\)?[-.\s]?  # Area code (with or without parentheses) and optional separator
+        [0-9]{3}[-.\s]?          # First three digits and optional separator
+        [0-9]{4}\b               # Last four digits
+    '''
+    
+    # re.sub to remove matched phone numbers, re.VERBOSE to allow multiline and comments
+    return re.sub(phone_pattern, '', text, flags=re.VERBOSE)
 
 
 # Function to split text into sentences while avoiding certain splits
@@ -29,6 +37,25 @@ def split_into_sentences(text):
     sentences = nltk.tokenize.sent_tokenize(clean_text)
 
     return sentences
+
+# Function to remove URLs from text
+def remove_urls(text):
+    # Regular expression pattern for matching URLs
+    url_pattern = r'https?://(?:www\.)?\S+|www\.\S+'
+    
+    # Explanation:
+    # - `https?`: Matches "http" or "https". The `s?` makes the "s" optional.
+    # - `://`: Matches the literal "://" in URLs.
+    # - `(?:www\.)?`: Non-capturing group to match "www." optionally.
+    #     - `www\.`: Matches "www." literally.
+    #     - `?`: Makes the preceding "www." part optional, allowing for URLs with or without "www".
+    # - `\S+`: Matches one or more non-whitespace characters, which covers the rest of the URL.
+    # - `|`: OR operator, allowing for an alternative pattern on the right side.
+    # - `www\.\S+`: Matches URLs starting with "www." but without "http" or "https".
+    # - This combination will match URLs starting with "http://", "https://", or just "www.".
+    
+    # Substitute all URLs in the text with an empty string to remove them
+    return re.sub(url_pattern, '', text)
 
 
 def get_all_sentences_array(file_path):
@@ -56,6 +83,7 @@ def get_all_sentences_array(file_path):
         # Remove any emails and phone numbers from the text for privacy or cleanup
         text = remove_emails(text)
         text = remove_phone_numbers(text)
+        text = remove_urls(text)
 
         # Split the cleaned text into individual sentences
         sentences = split_into_sentences(text)
