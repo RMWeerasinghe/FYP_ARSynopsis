@@ -28,15 +28,19 @@ class Sentence:
     """
 
     def __init__(self,index,text) -> None:
-        self._index = index
-        self._text = text
-        self._embedding = None
-        self._cluster = -1
+        self.index = index
+        self.text = text
+        self.embedding = None
+        self.cluster = -1
     
     def set_embedding(self,embedding) -> None:
-        self._embedding = embedding
+        self.embedding = embedding
     
     def set_cluster_label(self,label) -> None:
-        self._cluster = label
+        self.cluster = label
+
     def word_count(self) -> int:
-        return (len(self._text.split(" ")))
+        return (len(self.text.split(" ")))
+    
+    def get_id(self) -> int:
+        return self.index
