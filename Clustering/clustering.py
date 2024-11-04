@@ -42,7 +42,7 @@ def reduce_and_cluster(feature_mat:np.array, n_trials:int = 10, n_clusters_min:i
         # Suggest hyperparameters
 
         # Remember to change
-        n_neighbors = trial.suggest_categorical('n_neighbors', list(range(10,25,4)))
+        n_neighbors = trial.suggest_categorical('n_neighbors', list(range(5,50,3)))
         min_dist = trial.suggest_float('min_dist', 0.0, 0.99)
         n_components = trial.suggest_categorical('n_components', [48,96,128,256,384])
         num_clusters = trial.suggest_int('n_clusters',n_clusters_min,n_clusters_max)
@@ -130,7 +130,9 @@ def prepare_clusters(document:list[Sentence], n_clusters : int)-> dict[int:list[
     clustered_document = dict()
     for label in range(n_clusters):
         cluster = list(filter(lambda sent:sent.cluster == label, document))
-        clustered_document[label] = cluster
+        sorted_cluster = sorted(cluster, key=lambda Sentence: Sentence.index)
+        clustered_document[label] = sorted_cluster
+    
     return clustered_document
 
 def evaluate(X:np.array, y_pred: np.array):
