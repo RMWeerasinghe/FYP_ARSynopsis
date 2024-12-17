@@ -26,7 +26,7 @@ def get_feature_matrix(document:list[Sentence])-> np.array:
     feature_mat = np.array([x.embedding for x in document])
     return feature_mat
 
-def reduce_and_cluster(feature_mat:np.array, n_trials:int = 10, n_clusters_min:int = 10, n_clusters_max: int = 20):
+def reduce_and_cluster_with_tuning(feature_mat:np.array, n_trials:int = 10, n_clusters_min:int = 10, n_clusters_max: int = 20):
     '''
     Apply UMAP dimensionality reduction and then clustered using k-means clustering. Hyperparameters of UMAP and K-Means
     are selected using Optuna Tuning job
@@ -114,25 +114,79 @@ def reduce_and_cluster(feature_mat:np.array, n_trials:int = 10, n_clusters_min:i
 
     return best_cluster_labels, cluster_record
 
+def reduce_and_cluster(feature_mat:np.array,avg_sent_per_cluster:int):
+    '''
+    Apply UMAP dimensionality reduction and then clustered using k-means clustering. Hyperparameters of UMAP and K-Means
+    are selected considering the necessities of the task/ application.
+
+    Embedding Matrix -> Standardization -> UMAP -> Clustering
+
+    '''
+    start = time.time()
+    scaler = StandardScaler()
+    embeddings_scaled = scaler.fit_transform(feature_mat)
+    num_sentences = feature_mat.shape[0]
+    n_dim = feature_mat.shape[1]
+
+    # UMAP Hyperparameters
+    n_neighbors = int(num_sentences*0.10) # consider 10% of total sentences  - To capture global and local structures
+    n_components = 96
+    min_dist = 0.1 # use default value
+
+    # kmeans
+    num_clusters = num_sentences//avg_sent_per_cluster # in order to maintain managable sentence count for each cluster 
+    # for final stage abstractive summarization
+
+    # Dimensionality Reduction
+    reducer = umap.UMAP(
+        n_neighbors=n_neighbors,
+        min_dist=min_dist,
+        n_components=n_components,
+        metric='cosine',
+        random_state=42,
+        n_jobs=1,
+    )
+
+    reduced_embedding = reducer.fit_transform(embeddings_scaled)
+
+    kmeans = KMeans(n_clusters=num_clusters, random_state=42,  n_init = "auto")
+    cluster_labels = kmeans.fit_predict(reduced_embedding)
+
+    end = time.time()
+
+    cluster_record = {
+            'n_clusters' : num_clusters,
+            'time' : round((end-start),2)
+        }
+
+    print(f"Clustering was completed in {round((end-start),2)}s.")
+
+
+    return cluster_labels, cluster_record
+
 
 def update_document(document,best_cluster_labels):
 
     '''
         Update the sentece objects assigning cluster label of each sentence
     '''
+    start = time.time()
     for obj, cluster_label in zip(document, best_cluster_labels):
         obj.set_cluster_label(cluster_label)
-
+    end = time.time()
+    print(f"Document updated in {round((end-start),2)}s.")
 def prepare_clusters(document:list[Sentence], n_clusters : int)-> dict[int:list[Sentence]]:
     '''
     Return clustered organization of sentences as a dictionary
     '''
+    start = time.time()
     clustered_document = dict()
     for label in range(n_clusters):
         cluster = list(filter(lambda sent:sent.cluster == label, document))
         sorted_cluster = sorted(cluster, key=lambda Sentence: Sentence.index)
         clustered_document[label] = sorted_cluster
-    
+    end = time.time()
+    print(f"Prepared Clusters in {round((end-start),2)}s.")
     return clustered_document
 
 def evaluate(X:np.array, y_pred: np.array):
@@ -152,7 +206,7 @@ def evaluate(X:np.array, y_pred: np.array):
 
 ## Main function to clustering pipeline
 
-def k_means_cluster_document(document:list[Sentence], n_trials: int = 10) -> tuple[dict[int:list[Sentence]],dict]:
+def k_means_cluster_document_with_tuning(document:list[Sentence], n_trials: int = 10) -> tuple[dict[int:list[Sentence]],dict]:
     '''
     Cluster given document using kmeans clusering with hyperparameter tuning.
     parameters:
@@ -174,7 +228,7 @@ def k_means_cluster_document(document:list[Sentence], n_trials: int = 10) -> tup
 
     # perform clustering with hyperparameter tuning
 
-    best_cluster_labels, cluster_report = reduce_and_cluster(feature_mat = embedding_matrix, n_trials = n_trials, n_clusters_min = n_clusters_min, n_clusters_max = n_clusters_max)
+    best_cluster_labels, cluster_report = reduce_and_cluster_with_tuning(feature_mat = embedding_matrix, n_trials = n_trials, n_clusters_min = n_clusters_min, n_clusters_max = n_clusters_max)
 
     # update sentence structure
     update_document(document=document, best_cluster_labels= best_cluster_labels)
@@ -186,3 +240,36 @@ def k_means_cluster_document(document:list[Sentence], n_trials: int = 10) -> tup
     cluster_report.update(evaluation_report)
 
     return clustering, cluster_report
+
+
+def k_means_cluster_document(document:list[Sentence], avg_sent_per_cluster:int = 100) -> tuple[dict[int:list[Sentence]],dict]:
+    '''
+    Cluster given document using kmeans clusering with hyperparameter tuning.
+    parameters:
+        document: list of sentence objects
+    Returns:
+        clusters : dict
+        clustering report: dict
+
+    '''
+
+    # prepare data for clsutering
+
+    embedding_matrix = get_feature_matrix(document = document)
+
+    # perform clustering with hyperparameter tuning
+
+    cluster_labels, cluster_report = reduce_and_cluster(feature_mat = embedding_matrix,avg_sent_per_cluster = avg_sent_per_cluster)
+
+    # update sentence structure
+    update_document(document=document, best_cluster_labels= cluster_labels)
+
+    clustering = prepare_clusters(document=document,n_clusters=cluster_report['n_clusters'])
+
+    evaluation_report = evaluate(X = embedding_matrix, y_pred=cluster_labels)
+
+    cluster_report.update(evaluation_report)
+
+    return clustering, cluster_report
+
+
