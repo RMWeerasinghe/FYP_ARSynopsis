@@ -6,11 +6,15 @@ import sys
 import numpy as np
 import umap
 import optuna
+from math import ceil
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
 from sklearn.preprocessing import StandardScaler
 import time
-from permetrics import ClusteringMetric
+from sklearn.metrics import silhouette_score, davies_bouldin_score
+import dbcv
+from scipy.spatial.distance import cosine, euclidean
+from scipy.sparse import issparse
 
 # Data Structures
 sys.path.insert(0, 'C://GitHub//FYP_ARSynopsis//utils')
@@ -125,16 +129,16 @@ def reduce_and_cluster(feature_mat:np.array,avg_sent_per_cluster:int):
     start = time.time()
     scaler = StandardScaler()
     embeddings_scaled = scaler.fit_transform(feature_mat)
+    
     num_sentences = feature_mat.shape[0]
-    n_dim = feature_mat.shape[1]
 
     # UMAP Hyperparameters
-    n_neighbors = int(num_sentences*0.10) # consider 10% of total sentences  - To capture global and local structures
-    n_components = 96
+    n_neighbors =int(0.1 * num_sentences) # consider 10% of total sentences  - To capture global and local structures
+    n_components = 32
     min_dist = 0.1 # use default value
 
     # kmeans
-    num_clusters = num_sentences//avg_sent_per_cluster # in order to maintain managable sentence count for each cluster 
+    num_clusters = ceil(num_sentences/avg_sent_per_cluster) # in order to maintain managable sentence count for each cluster 
     # for final stage abstractive summarization
 
     # Dimensionality Reduction
@@ -159,7 +163,7 @@ def reduce_and_cluster(feature_mat:np.array,avg_sent_per_cluster:int):
             'time' : round((end-start),2)
         }
 
-    print(f"Clustering was completed in {round((end-start),2)}s.")
+    print(f"Clustering was completed in {round((end-start),2)}s.\tn_clusters:{num_clusters}")
 
 
     return cluster_labels, cluster_record
@@ -193,16 +197,29 @@ def evaluate(X:np.array, y_pred: np.array):
    '''
    Internal validation of clustering without ground truth labels
    '''
-   clustering_evaluator = ClusteringMetric(X=X, y_pred = y_pred)
+   start = time.time()
+   
+   si = silhouette_score(X, y_pred,metric = 'cosine')
+   #si_euc = silhouette_score(X, y_pred,metric = 'euclidean')
+   si_end = time.time()
+   dbi = davies_bouldin_score(X,y_pred)
+   dbi_end = time.time()
+   dbcv_score = dbcv.dbcv(X, y_pred, n_processes=4, metric="cosine",enable_dynamic_precision=True, bits_of_precision=512)
+   #dbcv_euc = dbcv.dbcv(X, y_pred, n_processes=4)
+   dbcv_end = time.time()
+
    metrics_dict = {
-      "DBI": None,   # Davies Bouldin Index
-      "SI" : None,   # Silhouette Index
-      "DBCVI": None,    # Density Based Clustering Validation Index
-      "DI" : None,   # Dunn Index
-      "CHI" : None, # Calinski Harabasz Index
+      "DBI": dbi,   # Davies Bouldin Index : The minimum score is zero, with lower values indicating better clustering.
+      "SI" : si,   # Silhouette Index: Best value 1 , Worst value -1, Values Near 0 - Overalpping clusters
+      "DBCV": dbcv_score,    # Density Based Clustering Validation Index: ranges from 0 to 1, with lower values indicating better clustering solutions.
+
+      # "SI_Euclidean":si_euc,
+      # "DBCV_Euclidean":dbcv_euc
    }
-   evaluation_report = clustering_evaluator.get_metrics_by_dict(metrics_dict)
-   return evaluation_report
+
+   print(f"Evalution completed in {round((dbcv_end-start),2)}s.===> Silhouette Score: {round((si_end-start),2)}s\tDavies Bouldin Index: {round((dbi_end-si_end),2)}s\tDBCV:  {round((dbcv_end-dbi_end),2)}s") 
+
+   return metrics_dict
 
 ## Main function to clustering pipeline
 

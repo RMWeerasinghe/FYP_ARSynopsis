@@ -167,8 +167,11 @@ Sample_Reports/
 Results/
 Analysis_and_Test/
 Test_Data_Preperation/
-Clustering/choi/
+Clustering/choi_1/
+Clustering/choi_2/
+Clustering/wiki-50/
+Clustering/wiki_727k_dev/
+Clustering/wiki_727k_test/
 Clustering/Test_on_CHOI
-Clustering/annual_report_clustering_with_positional_embedding copy.ipynb
-Clustering/annual_report_clustering_with_positional_embedding.ipynb
-Clustering/annual_report_clustering_without_positional_embedding.ipynb
+*.ipynb
+
