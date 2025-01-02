@@ -173,5 +173,7 @@ Clustering/wiki-50/
 Clustering/wiki_727k_dev/
 Clustering/wiki_727k_test/
 Clustering/Test_on_CHOI
+
+Content_Selection/test_results
 *.ipynb
 
