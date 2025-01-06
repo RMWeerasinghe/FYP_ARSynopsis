@@ -1,7 +1,7 @@
 """
 script to load embeddings
 """
-
+import time
 import torch
 from transformers import BertTokenizer, BertModel
 import torch.nn as nn
@@ -131,6 +131,8 @@ def process_sentences_with_positional_encoding_updated(sentences):
     - Applying document-level positional encoding
     - Returning sentence embeddings with positional encoding
     """
+
+    start = time.time()
     # Load SentenceTransformer model
     model = SentenceTransformer('sentence-transformers/xlm-r-bert-base-nli-mean-tokens')
 
@@ -163,6 +165,8 @@ def process_sentences_with_positional_encoding_updated(sentences):
         sentence_obj.set_embedding(modified_embedding)
         sentence_objects.append(sentence_obj)
 
+    end = time.time()
+    print(f"Obtained Positional Encoded Embeddings in {round((end-start),2)}")
     return sentence_objects
 
 
