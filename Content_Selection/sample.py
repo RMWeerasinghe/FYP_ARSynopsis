@@ -2,7 +2,7 @@ import sys
 
 sys.path.insert(0, 'C://GitHub//FYP_ARSynopsis//utils')
 from sentence import Sentence
-from utils import display_document_with_clusters, sort_by_longest_seq
+from utils import display_document_with_clusters, get_condensed_report
 
 sys.path.insert(0, 'C://GitHub//FYP_ARSynopsis//Embeddings')
 from preprocessing import get_all_sentences_array
@@ -35,26 +35,21 @@ if __name__ == "__main__":
     extracted_document = pacsum_summarizer(clustering,-2,1,0.6,0.2)
 
     # Reorder the doc
-    condensed_doc_with_segments = sort_by_longest_seq(extracted_document)
+    condensed_report = get_condensed_report(extracted_document)
 
-    print(f"Re-ordering of cluster: {condensed_doc_with_segments.keys()}")
 
-    for label,cluster in condensed_doc_with_segments.items():
-        print(f"Cluster: {label}")
-        print("".join([sentence.text for sentence in cluster]))
+    for section in condensed_report:
+        print(f"=========================================================")
+        print(section)
 
     # Sample output format
 
-    # {cluster_label 1 (int) : 
-    #     [Sentence Object 1, Sentence Object 2, Sentence Object 3, ....],
+    #[ 
+    #     [paragraph 1, paragraph 2, paragraph 3, ....],
     # cluster_label 2 (int) : 
-    #     [Sentence Object 4, Sentence Object 5, Sentence Object 6, ....],
+    #     [paragraph 4, paragraph 5, paragraph 6, ....],
     # ...
-    #     }
+    #     ]
 
-    # Sentence Object : See Utils/sentence.py
-    # Sentece:
-    #     - index
-    #     - embedding
-    #     - text
-    #     - cluster
+    # paragraph : All text content belongs to a section/ cluster
+ 

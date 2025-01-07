@@ -16,6 +16,7 @@ import dbcv
 from scipy.spatial.distance import cosine, euclidean
 from scipy.sparse import issparse
 
+
 # Data Structures
 sys.path.insert(0, 'C://GitHub//FYP_ARSynopsis//utils')
 from sentence import Sentence
@@ -188,7 +189,10 @@ def prepare_clusters(document:list[Sentence], n_clusters : int)-> dict[int:list[
     for label in range(n_clusters):
         cluster = list(filter(lambda sent:sent.cluster == label, document))
         sorted_cluster = sorted(cluster, key=lambda Sentence: Sentence.index)
-        clustered_document[label] = sorted_cluster
+        avg_word_count = np.mean([sent.word_count() for sent in sorted_cluster])
+        if avg_word_count > 5:
+            # Ignore clusters with lesser avg word count
+            clustered_document[label] = sorted_cluster
     end = time.time()
     print(f"Prepared Clusters in {round((end-start),2)}s.")
     return clustered_document
