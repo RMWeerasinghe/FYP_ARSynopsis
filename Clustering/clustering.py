@@ -28,7 +28,7 @@ def get_feature_matrix(document:list[Sentence])-> np.array:
          M: Number of Sentences in the document
          N: Embedding Dimention
     '''
-    feature_mat = np.array([x.embedding for x in document])
+    feature_mat = np.array([x.pos_embedding for x in document])
     return feature_mat
 
 def reduce_and_cluster_with_tuning(feature_mat:np.array, n_trials:int = 10, n_clusters_min:int = 10, n_clusters_max: int = 20):

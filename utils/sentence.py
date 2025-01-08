@@ -7,19 +7,23 @@ class Sentence:
 
     Attributes:
     ---------------------------
-    _index : int
+    index : int
         A unique identifier for the sentence object refers to the position of the sentence in PDF
-    _text : string
+    text : string
         The actual sentence in human language
-    _embedding: array
-        Embedding vector of the sentence
-    _cluster: int
+    embedding : array
+        Sentence BERT embedding of the sentence
+    pos_embedding: array
+        Positional Encoded Embedding vector of the sentence
+    cluster: int
         Cluster label of the sentence. Initialize to -1 indicating complete PDF
     
     Methods:
     --------------------------
     set_embedding(embedding):
-        Add generated embedding of the sentence
+        Add generated SentenceBERT embedding of the sentence
+    set_pos_embedding(embedding):
+        Add generated positional encoded embedding of the sentence
     set_cluster_label(int):
         Add cluster label after clustering
     word_count():
@@ -31,10 +35,14 @@ class Sentence:
         self.index = index
         self.text = text
         self.embedding = None
+        self.pos_embedding = None
         self.cluster = -1
     
     def set_embedding(self,embedding) -> None:
         self.embedding = embedding
+
+    def set_pos_embedding(self,pos_embedding) -> None:
+        self.pos_embedding = pos_embedding
     
     def set_cluster_label(self,label) -> None:
         self.cluster = label

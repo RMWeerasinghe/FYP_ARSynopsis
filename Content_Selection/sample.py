@@ -46,9 +46,7 @@ if __name__ == "__main__":
 
     #[ 
     #     [paragraph 1, paragraph 2, paragraph 3, ....],
-    # cluster_label 2 (int) : 
-    #     [paragraph 4, paragraph 5, paragraph 6, ....],
-    # ...
+    # 
     #     ]
 
     # paragraph : All text content belongs to a section/ cluster
