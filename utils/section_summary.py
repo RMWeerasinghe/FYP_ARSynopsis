@@ -22,7 +22,13 @@ class SectionSummary:
     get_section_id():
         Return the section id
     
-    
+    []= [para1, para2, para3] -> [para1, para2, para3]  & [sum1, sum2,sum3] -> [section_sum1, sectiopn_sum2,..]
+
+    section_sum1
+     - section id = 1
+     - summary = sum1 "= ""
+     - mapping [""sent2"", sent3, "we are ",]
+        Explana
     """
 
     def __init__(self,section_id) -> None:

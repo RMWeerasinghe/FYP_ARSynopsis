@@ -8,7 +8,7 @@ import sys
 
 sys.path.insert(0, 'C://GitHub//FYP_ARSynopsis//utils')
 from sentence import Sentence
-from utils import display_document_with_clusters, sort_by_longest_seq
+from utils import get_condensed_report
 
 sys.path.insert(0, 'C://GitHub//FYP_ARSynopsis//Embeddings')
 from preprocessing import get_all_sentences_array
@@ -50,13 +50,12 @@ def extraction_pipe(text_or_pdf_path:str, is_pdf:bool = False)->str:
         extracted_document = pacsum_summarizer(clustering,-2,1,0.6,0.3)
 
         # Reorder the doc
-        condensed_doc_with_segments = sort_by_longest_seq(extracted_document)
+        condensed_report = get_condensed_report(extracted_document)
 
         summary = ""
 
-        for label,cluster in condensed_doc_with_segments.items():
-            paragraph_summary = "".join([sentence.text for sentence in cluster])
-            summary+= paragraph_summary
+        for paragraph in condensed_report:
+            summary+= paragraph
             summary+="\n"
 
         end = time.time()

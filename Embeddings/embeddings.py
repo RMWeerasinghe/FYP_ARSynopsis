@@ -162,7 +162,8 @@ def process_sentences_with_positional_encoding_updated(sentences):
 
         # Create Sentence object with sentence ID, text, and positional encoded embeddings
         sentence_obj = Sentence(index = sentence_id, text=sentence_texts[idx])
-        sentence_obj.set_embedding(modified_embedding)
+        sentence_obj.set_embedding(sentence_embedding) # SentenceBERT embedding for extractive summarization
+        sentence_obj.set_pos_embedding(modified_embedding) # positonal_encoded embedding
         sentence_objects.append(sentence_obj)
 
     end = time.time()

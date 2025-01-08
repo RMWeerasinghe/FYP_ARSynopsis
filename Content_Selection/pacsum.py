@@ -1,7 +1,10 @@
 import sys
 import numpy as np
+from sentence_transformers import SentenceTransformer
 sys.path.insert(0, 'C://GitHub//FYP_ARSynopsis//utils')
 from sentence import Sentence
+
+model = SentenceTransformer('sentence-transformers/xlm-r-bert-base-nli-mean-tokens')
 
 def get_document_vectors(document:list[Sentence]) -> list[np.array]:
     """
