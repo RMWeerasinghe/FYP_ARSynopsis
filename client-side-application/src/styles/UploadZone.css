@@ -1,0 +1,76 @@
+.upload-zone {
+  /* Base container styles */
+  border: 2px dashed #d1d5db; /* Ash border */
+  border-radius: 12px;
+  padding: 40px 20px;
+  text-align: center;
+  cursor: pointer;
+  margin: 5px;
+  background-color: #f9fafb; /* Light white background */
+  transition: all 0.3s ease;
+  position: relative;
+  min-height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Hover effects */
+.upload-zone:hover {
+  border-color: #6b7280; /* Dark ash for hover */
+  background-color: #f3f4f6; /* Slightly darker white for hover */
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+/* Text styles */
+.upload-zone p {
+  font-size: 1.125rem;
+  color: #374151; /* Dark gray for text */
+  margin: 0;
+  line-height: 1.6;
+  font-weight: 500;
+}
+
+/* Active drag state */
+.upload-zone[aria-disabled="false"]:active {
+  border-color: #4b5563; /* Darker ash for active */
+  background-color: #e5e7eb; /* Light ash for active */
+  transform: scale(0.98);
+}
+
+/* Add a subtle pulse animation when dragging */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    border-color: #6b7280; /* Dark ash for pulse */
+  }
+  50% {
+    transform: scale(1.02);
+    border-color: #4b5563; /* Slightly darker ash for pulse */
+  }
+  100% {
+    transform: scale(1);
+    border-color: #6b7280; /* Dark ash for pulse */
+  }
+}
+
+.upload-zone[aria-disabled="false"][data-drag-active="true"] {
+  animation: pulse 1.5s infinite;
+  background-color: #e5e7eb; /* Light ash background during drag */
+  border-width: 3px;
+}
+
+/* Add responsive design */
+@media (max-width: 640px) {
+  .upload-zone {
+    padding: 20px 15px;
+    min-height: 150px;
+    margin: 10px;
+  }
+  
+  .upload-zone p {
+    font-size: 1rem;
+  }
+}
