@@ -1,0 +1,99 @@
+.summary-display {
+    background-color: #ffffff;
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add shadow */
+    margin-top: 0px;
+    padding: 40px;
+    margin: 10px 0;
+    height: 380px;
+    overflow-y: auto;
+    position: relative;
+  }
+
+  .top-right-button {
+    position: absolute; /* Allow positioning relative to the parent */
+    top: 10px; /* Adjust spacing from the top */
+    right: 10px; /* Adjust spacing from the right */
+    padding: 5px 10px; /* Adjust button size */
+    background-color: transparent; /* Transparent background */
+    color: white; /* Button text color */
+    border: none; /* Remove border */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    height: 40px;
+    width: 40px;
+  }
+  
+  
+  
+  .summary-display p {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #333333;
+  }
+  .reference-display {
+    background-color: #ffffff;
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add shadow */
+    padding: 20px;
+    margin: 10px 0;
+    height: 200px; /* Set a fixed height */
+    overflow-y: auto; /* Enable vertical scroll bar */
+  }
+  
+  .reference-display p {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #333333;
+  }
+
+  /* Custom Scroll Bar Styles */
+reference-display::-webkit-scrollbar {
+  width: 8px; /* Width of the scrollbar */
+}
+
+reference-display::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Scrollbar track color */
+  border-radius: 10px; /* Rounded corners for the track */
+}
+
+reference-display::-webkit-scrollbar-thumb {
+  background: #888; /* Scrollbar thumb color */
+  border-radius: 10px; /* Rounded corners for the thumb */
+}
+
+reference-display::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Thumb color on hover */
+}
+  
+  .summary-sentence {
+    position: relative;
+    display: inline-block;
+    transition: background-color 0.3s;
+  }
+  
+  .summary-sentence:hover {
+    background-color: #f0f8ff; /* Light blue highlight */
+  }
+  
+  .summary-sentence[data-tooltip]:hover::after {
+    content: attr(data-tooltip); /* Display tooltip text */
+    position: absolute;
+    bottom: 100%; /* Position tooltip above the text */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333; /* Tooltip background color */
+    color: #fff; /* Tooltip text color */
+    padding: 5px 10px;
+    border-radius: 4px;
+    white-space: nowrap;
+    font-size: 12px;
+    z-index: 10;
+    opacity: 1;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  
+  .summary-sentence[data-tooltip]::after {
+    opacity: 0;
+  }
