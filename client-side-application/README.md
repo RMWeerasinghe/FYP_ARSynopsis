@@ -31,7 +31,7 @@ npm start
 The app will now be running at http://localhost:3000
 
 ## Running the App with Docker
-If you'd prefer to run the app in a Docker container, follow these steps:
+If you'd prefer to run the app in a Docker container, follow these steps.Before these steps make sure to run the Docker Dekstop
 
 ## 1. Build Docker Image
 run the following command to build the Docker image:
