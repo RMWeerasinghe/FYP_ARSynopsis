@@ -18,4 +18,4 @@ Clone this repository to your local machine:
 git clone https://github.com/RMWeerasinghe/FYP_ARSynopsis.git
 cd repo-name/client-side-application
 
-
+### 1. Installing Dependencies
