@@ -4,6 +4,8 @@ import shutil
 import sys
 import os
 
+from fastapi.middleware.cors import CORSMiddleware
+
 # # Add the parent directory to sys.path
 # sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 # # Import your custom summarization functions
@@ -28,6 +30,14 @@ sys.path.insert(0, 'C://Users//siriw//OneDrive/Desktop//New folder (2)//FYP_ARSy
 from extractive_summarizer import text_rank_summarizer, pacsum_summarizer
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Update with your frontend URL: For now it has been set to allow all origins
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.post("/summarize")
 async def summarize(file: UploadFile = File(...)):
@@ -65,3 +75,6 @@ async def summarize(file: UploadFile = File(...)):
 
     except Exception as e:
         return JSONResponse({"error": str(e)}, status_code=500)
+    
+    
+
