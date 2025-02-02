@@ -1,6 +1,6 @@
-# My React App
+# ARSynopsis Client Side Application
 
-This is a React application that includes a Dockerfile for easy deployment. You can run the app locally in a development environment or containerize it using Docker.
+This is a React application for ARSynopsis. You can run the app locally in a development environment or containerize it using Docker.
 
 ## Prerequisites
 
