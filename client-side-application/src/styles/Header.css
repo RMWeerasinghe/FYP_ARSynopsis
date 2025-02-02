@@ -1,0 +1,64 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    /* background-color: #f8f9fa; Light gray background */
+    /* border-bottom: 1px solid #dcdcdc; Subtle border */
+    /* position: sticky; Makes the header sticky */
+    top: 0; /* Sticks the header to the top of the page */
+    z-index: 1000; /* Ensures the header is on top of other content */
+  }
+  
+  .header-title {
+    font-size: 1.5rem;
+    font-weight: 600; /* Medium-bold font weight */
+    color: #212529; /* Dark gray text color for the title */
+    margin: 0;
+  }
+  
+  .header-buttons {
+    display: flex;
+    gap: 10px; /* Space between buttons */
+  }
+  
+  .header-button {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    font-weight: 500; /* Medium font weight for buttons */
+    color: #495057; /* Gray text color */
+    background-color: #fff; /* White background */
+    border: 1px solid #ced4da; /* Subtle border for buttons */
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px; /* Space between icon and text */
+    transition: background-color 0.3s, border-color 0.3s; /* Smooth hover effects */
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .header-button:hover {
+    background-color: #f8f9fa; /* Light gray hover effect */
+    border-color: #adb5bd; /* Slightly darker border on hover */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.15); 
+  }
+  
+  .refresh-button {
+    color: rgb(56, 56, 56); /* Blue text color for Refresh button */
+    font-weight: 600; /* Semi-bold font for the Refresh button */
+  }
+  
+  .refresh-button:hover {
+    background-color: #e6f2ff; /* Light blue hover background */
+  }
+  
+  .download-button {
+    color: rgb(56, 56, 56); /* Green text color for Download Summary button */
+    font-weight: 600; /* Semi-bold font for the Download button */
+  }
+  
+  .download-button:hover {
+    background-color: #e8f7eb; /* Light green hover background */
+  }
+  
