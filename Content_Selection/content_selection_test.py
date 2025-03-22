@@ -2,7 +2,7 @@
 Test script to test a long report dataset using the segmentation + extractive summarization framework.
 """
 from datasets import Dataset, load_metric
-from extractive_summarizer import text_rank_summarizer, pacsum_summarizer
+from extractive_summarizer import text_rank_summarizer, pacsum_summarizer,gusum_summarizer
 import pandas as pd
 import sys
 
@@ -26,7 +26,7 @@ nltk.download('punkt_tab')
 
 import time
 
-def extraction_pipe(text_or_pdf_path:str, is_pdf:bool = False)->str:
+def extraction_pipe(text_or_pdf_path:str,summarizer:str = "gusum",p_to_selcet:float = 0.3, is_pdf:bool = False)->str:
     try:
         start = time.time()
         if is_pdf:
@@ -43,11 +43,21 @@ def extraction_pipe(text_or_pdf_path:str, is_pdf:bool = False)->str:
         # K-Means Clustering with dimensionality reduction 
         clustering, cluster_report = k_means_cluster_document(document,k)
 
+        if summarizer=="text_rank":
+            extracted_document = text_rank_summarizer(clustering, p_to_select)
+        
+        elif summarizer == "pacsum":
+            extracted_document = pacsum_summarizer(clustering,-2,1,0.6,p_to_selcet)
+
+        elif summarizer == "gusum":
+            extracted_document = gusum_summarizer(clustering,p_to_selcet)
+
         # extractive summarization using Text Rank
         #extracted_document = text_rank_summarizer(clustering, 0.3)
 
         # extractive summarization using PacSum
-        extracted_document = pacsum_summarizer(clustering,-2,1,0.6,0.3)
+        # extracted_document = pacsum_summarizer(clustering,-2,1,0.6,0.3)
+
 
         # Reorder the doc
         condensed_report = get_condensed_report(extracted_document)
@@ -63,7 +73,7 @@ def extraction_pipe(text_or_pdf_path:str, is_pdf:bool = False)->str:
     except:
         return {"generated_summary": None, 'SI': None,"DBI": None,"DBCV": None,"time":None}
 def dataset_process(row):
-    return extraction_pipe(row["report"])
+    return extraction_pipe(row["report"],p_to_selcet=0.5)
 
 def test_on_dataset(dataset: Dataset, result_file_path:str):
     

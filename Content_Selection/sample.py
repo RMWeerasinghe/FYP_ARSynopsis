@@ -37,10 +37,19 @@ if __name__ == "__main__":
     # Reorder the doc
     condensed_report = get_condensed_report(extracted_document)
 
+    # --- Extractive
+
+
+    # ---Abstrcit
+
+    #-- Output
+
 
     for section in condensed_report:
         print(f"=========================================================")
         print(section)
+
+    #
 
     # Sample output format
 

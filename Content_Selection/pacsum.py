@@ -16,7 +16,7 @@ def get_document_vectors(document:list[Sentence]) -> list[np.array]:
         List of document vectors for the given list of sentences
         document_vectores[i] = sentence[i].embedding
     """
-    document_vectors = np.array([sentence.embedding for sentence in document])
+    document_vectors = np.array([x.embedding.cpu().detach().numpy() for x in document])
     return document_vectors
 
 def calculate_similarity_matrix(document:list[Sentence]) -> list[list[float]]:
