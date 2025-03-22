@@ -12,7 +12,7 @@ sys.path.insert(0, 'C://GitHub//FYP_ARSynopsis//Clustering')
 from clustering import k_means_cluster_document
 
 sys.path.insert(0, 'C://GitHub//FYP_ARSynopsis//Content_Selection')
-from extractive_summarizer import text_rank_summarizer, pacsum_summarizer
+from extractive_summarizer import text_rank_summarizer, pacsum_summarizer, gusum_summarizer
 
 if __name__ == "__main__":
 
@@ -32,7 +32,9 @@ if __name__ == "__main__":
     #extracted_document = text_rank_summarizer(clustering, 0.3)
 
     # extractive summarization using PacSum
-    extracted_document = pacsum_summarizer(clustering,-2,1,0.6,0.2)
+    # extracted_document = pacsum_summarizer(clustering,-2,1,0.6,0.2)
+
+    extracted_document = gusum_summarizer(clustering, 0.3)
 
     # Reorder the doc
     condensed_report = get_condensed_report(extracted_document)
