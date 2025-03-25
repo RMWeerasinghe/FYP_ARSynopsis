@@ -1,3 +1,4 @@
+from nltk import word_tokenize
 class Sentence:
     """
     A new data structure to represent a sentence in a PDF.
@@ -48,7 +49,7 @@ class Sentence:
         self.cluster = label
 
     def word_count(self) -> int:
-        return (len(self.text.split(" ")))
+        return (len(word_tokenize(self.text)))
     
     def get_id(self) -> int:
         return self.index

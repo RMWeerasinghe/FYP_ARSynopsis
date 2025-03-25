@@ -6,6 +6,7 @@ import sys
 import numpy as np
 import umap
 import optuna
+import multiprocessing
 from math import ceil
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
@@ -15,6 +16,7 @@ from sklearn.metrics import silhouette_score, davies_bouldin_score
 import dbcv
 from scipy.spatial.distance import cosine, euclidean
 from scipy.sparse import issparse
+
 
 
 # Data Structures
@@ -180,6 +182,8 @@ def update_document(document,best_cluster_labels):
         obj.set_cluster_label(cluster_label)
     end = time.time()
     print(f"Document updated in {round((end-start),2)}s.")
+
+
 def prepare_clusters(document:list[Sentence], n_clusters : int)-> dict[int:list[Sentence]]:
     '''
     Return clustered organization of sentences as a dictionary
