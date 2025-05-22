@@ -104,7 +104,7 @@ def rank_sentences(paragraph:list[Sentence]):
 
 def gusum_extracter(paragraph:list[Sentence], p:float):
     ranked_sentences = rank_sentences(paragraph)
-    k = max(len(paragraph)*p,80)
+    k = min(int(len(paragraph)*p),80)
     top_k_sentences = ranked_sentences[:k]
     sorted_top_k = sorted(top_k_sentences, key=lambda x: x.index)
     return sorted_top_k

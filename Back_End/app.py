@@ -22,5 +22,6 @@ if uploaded_file is not None:
                 summary = response.json().get("summary", "No summary available.")
                 st.success("Summary generated!")
                 st.write(summary)
+                
             else:
                 st.error("Failed to generate summary. Please check the backend.")

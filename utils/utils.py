@@ -94,7 +94,7 @@ def get_condensed_report(clustering_after_extraction:dict[int:list[Sentence]]) -
 
     return condensed_report
 
-def create_output(section_list:list[str],summary_list:list[str]):
+def create_output(section_list:list[str],summary_list:list[str], sentiment_results:dict[int:dict[str:list[str]]], sentiment_propotions:dict[int:dict[str:float]]):
     model = SentenceTransformer('sentence-transformers/xlm-r-bert-base-nli-mean-tokens')
     """
     Prepares the annual report summary to get the final output. Returns the list of SectionSummary obejcts,
@@ -121,6 +121,7 @@ def create_output(section_list:list[str],summary_list:list[str]):
         section_summary = SectionSummary(index)
         section_summary.add_summary(summary_list[index])
         section_summary.set_mapping(mapping_list)
+        section_summary.set_sentiment(sentiment_results[index],sentiment_propotions[index])
 
         summarized_report.append(section_summary)
     end = time.time()
