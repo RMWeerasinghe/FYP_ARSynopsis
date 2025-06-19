@@ -1,0 +1,7 @@
+.file-button:hover {
+    background-color: #f0f8ff; /* Light blue background on hover */
+    color: #222a35; /* Dark text color on hover */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+
+}

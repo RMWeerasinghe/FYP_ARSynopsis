@@ -1,0 +1,88 @@
+{
+  "companies": [
+    {
+      "name": "United Motors (PVT) LTD",
+      "category": "Export"
+    },
+    {
+      "name": "Commercial Bank PLC",
+      "category": "Banking"
+    },
+    {
+      "name": "Sampath Bank PLC",
+      "category": "Banking"
+    },
+    {
+      "name": "Hayleys PLC",
+      "category": "Conglomerate"
+    },
+    {
+      "name": "LOLC Holdings",
+      "category": "Conglomerate"
+    },
+    {
+      "name": "Hatton National Bank",
+      "category": "Banking"
+    },
+    {
+      "name": "John Keells Holdings",
+      "category": "Conglomerate"
+    },
+    {
+      "name": "Carson Cumberbatch",
+      "category": "Conglomerate"
+    },
+    {
+      "name": "Bukit Darah",
+      "category": "Beverage"
+    },
+    {
+      "name": "Lanka IOC",
+      "category": "Energy"
+    },
+    {
+      "name": "CT Holdings",
+      "category": "Retail"
+    },
+    {
+      "name": "Cargills (Ceylon)",
+      "category": "Retail"
+    },
+    {
+      "name": "Dialog Axiata",
+      "category": "Telecommunications"
+    },
+    {
+      "name": "Melstacorp",
+      "category": "Conglomerate"
+    },
+    {
+      "name": "Ceylon Cold Stores",
+      "category": "Food & Beverage"
+    },
+    {
+      "name": "National Development Bank",
+      "category": "Banking"
+    },
+    {
+      "name": "Vallibel One",
+      "category": "Conglomerate"
+    },
+    {
+      "name": "Hemas Holdings",
+      "category": "Conglomerate"
+    },
+    {
+      "name": "Seylan Bank",
+      "category": "Banking"
+    },
+    {
+      "name": "Ceylon Beverage Holdings",
+      "category": "Beverage"
+    },
+    {
+      "name": "Lion Brewery (Ceylon)",
+      "category": "Beverage"
+    }
+  ]
+}

@@ -22,7 +22,7 @@
     "react-dropzone": "^14.3.5",
     "react-multi-carousel": "^2.8.5",
     "react-pdf": "^9.2.1",
-    "react-scripts": "5.0.1",
+    "react-scripts": "^5.0.1",
     "string-similarity": "^4.0.4",
     "tailwind-merge": "^2.6.0"
   },
