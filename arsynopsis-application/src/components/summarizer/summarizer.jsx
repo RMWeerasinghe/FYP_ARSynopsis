@@ -107,10 +107,108 @@ const Summerizer = () => {
     }
   };
 
+  const getPresignedUrl = async (filename, filetype,actiontype) => {
+    try {
+      const response = await fetch("http://localhost:8000/get-preassigned-url", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          filename,
+          filetype,
+          actiontype,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to get presigned URL");
+      }
+
+      const data = await response.json();
+      return data.preassigned_url;
+    } catch (error) {
+      console.error("Error getting presigned URL:", error);
+      throw error;
+    }
+  }
+
+  const uploadObject = async (file) => {
+
+    try {
+      if (!file) {
+        alert("Please select a file first!");
+        return;
+      }
+
+      const preassigned_url = await getPresignedUrl(
+        file.name,
+        file.type,
+        "put_object"
+      );
+
+      if (!preassigned_url) {
+        alert("Invalid response from server");
+        return;
+      }
+
+      const uploadResponse = await fetch(preassigned_url, {
+        method: "PUT",
+        headers: {
+          "Content-Type": file.type,
+        },
+        body: file,
+      });
+
+      if (uploadResponse.ok) {
+        alert("File uploaded successfully!");
+      } else {
+        const uploadErrorText = await uploadResponse.text(); // Get raw error text from S3
+        alert(`Upload failed: ${uploadErrorText}`);
+        console.error("S3 Upload Error:", uploadErrorText);
+      }
+    } catch (error) {
+      console.error("Error during file upload:", error);
+      alert("An error occurred while uploading the file. Please try again.");
+    }
+
+  }
+
+  const UploadFile = async () => {
+    try {
+      if (!pdfFile) {
+        alert("Please select a file first!");
+        return;
+      }
+
+      
+      await uploadObject(pdfFile);
+      console.log("File uploaded successfully:", pdfFile.name);
+
+      const summary_data = data;
+      const summaryJsonString = JSON.stringify(summary_data, null, 2); // pretty print
+      const summaryBlob = new Blob([summaryJsonString], { type: 'application/json' });
+      
+      const summaryFileName = `${pdfFile.name.split('.')[0]}_summary.json`;
+      const summaryFile = new File([summaryBlob], summaryFileName, { type: '  application/json' });
+      await uploadObject(summaryFile);
+
+    } catch (error) {
+      console.error("Error during file upload:", error);
+      alert("An error occurred while uploading the file. Please try again.");
+    }
+  };
+
   const handleFileSave = async () => {
     const user_mail = await getCurrentUser();
     if (!user_mail) {
       console.error("No user is currently logged in.");
+      return;
+    }
+
+    // const response = await UploadFile();
+    if (!response) {
+      console.error("File upload failed, cannot save document details.");
       return;
     }
 
@@ -221,7 +319,7 @@ const Summerizer = () => {
               <button
                 className="btn btn-primary"
                 type="submit"
-                onClick={handleFileSave}
+                onClick={UploadFile}
               >
                 Save
               </button>
@@ -332,7 +430,7 @@ const Summerizer = () => {
         )}
 
         <div className="main-container">
-          <div className="left-panel" style={{width: 600}}>
+          <div className="left-panel" style={{ width: 600 }}>
             {pdfFile ? (
               <PdfViewer
                 file={pdfFile}

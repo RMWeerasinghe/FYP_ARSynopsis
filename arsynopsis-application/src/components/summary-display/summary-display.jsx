@@ -121,8 +121,8 @@ const SummaryDisplay = ({
         {resultArray?.length > 0 ? (
           <div>
             <ul>
-              {resultArray.map((result, index) => (
-                <li>
+              {resultArray.map((result, key) => (
+                <li key={key}>
                   {/* <div
                     key={index}
                     style={{
