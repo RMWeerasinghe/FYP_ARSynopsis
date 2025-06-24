@@ -9,7 +9,7 @@ import data from "../../data/company_list.json"
 import {getDocumentsByEmail} from "../../services/document-service"
 import { getCurrentUser } from "@/services/user-service";
 
-const Library = () => {
+const Library = ({onDocumentSelect}) => {
 
   const [documents, setDocuments] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
@@ -63,7 +63,10 @@ const Library = () => {
           <FileCard
             key={index}
             company_name={document.company_name}
+            doc_id = {document.doc_id}
             category={document.category}
+            doc_name ={document.doc_name}
+            onDocumentSelect={onDocumentSelect}
           />
         ))}
 

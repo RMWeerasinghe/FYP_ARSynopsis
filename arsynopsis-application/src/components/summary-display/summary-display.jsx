@@ -13,6 +13,7 @@ const SummaryDisplay = ({
   resultArray,
   changePageNumber,
   setDivRef,
+  displayRef,
 }) => {
   // const [resultArray, setResultArray] = useState([]);
 
@@ -20,10 +21,14 @@ const SummaryDisplay = ({
   const [modalShow, setModalShow] = React.useState(false);
 
   const [selectedId, setSelectedId] = useState(null);
+  const [positives, setPositives] = useState([]);
+  const [negatives, setNegatives] = useState([]);
 
-  const handleSentenceClick = (mapping, section_id) => {
+  const handleSentenceClick = (mapping, section_id, postives, negatives) => {
     setSelectedId(section_id);
     onSelectSentence(mapping); // Send the selected sentence to App.js
+    setPositives(postives);
+    setNegatives(negatives);
   };
 
   const handleScroll = (page) => {
@@ -81,120 +86,143 @@ const SummaryDisplay = ({
             {sentence}
           </span>
         ))} */
-          summary.map(({ section_id, summary, mapping }) => {
-            const isSelected = selectedId === section_id;
+          summary.map(
+            ({ section_id, summary, mapping, postives, negatives }) => {
+              const isSelected = selectedId === section_id;
 
-            return (
-              <span
-                key={section_id}
-                className="summary-sentence"
-                onClick={() => handleSentenceClick(mapping, section_id)}
-                style={{
-                  cursor: "pointer",
-                  display: "inline",
-                  margin: "0 5px",
-                  fontSize: "0.9rem",
-                  fontWeight: 500,
-                  color: "#fff",
-                  backgroundColor: isSelected ? "#4a557a" : "transparent", // Highlight color when selected
-                  borderRadius: "4px",
-                  padding: isSelected ? "2px 6px" : "0",
-                  transition: "background-color 0.3s ease",
-                }}
-                onMouseEnter={(e) => {
-                  if (!isSelected)
-                    e.currentTarget.style.backgroundColor = "#3a4461";
-                }}
-                onMouseLeave={(e) => {
-                  if (!isSelected)
-                    e.currentTarget.style.backgroundColor = "transparent";
-                }}
-              >
-                {summary}
-              </span>
-            );
-          })
+              return (
+                <span
+                  key={section_id}
+                  className="summary-sentence"
+                  onClick={() =>
+                    handleSentenceClick(
+                      mapping,
+                      section_id,
+                      postives,
+                      negatives
+                    )
+                  }
+                  style={{
+                    cursor: "pointer",
+                    display: "inline",
+                    margin: "0 5px",
+                    fontSize: "0.9rem",
+                    fontWeight: 500,
+                    color: "#fff",
+                    backgroundColor: isSelected ? "#4a557a" : "transparent", // Highlight color when selected
+                    borderRadius: "4px",
+                    padding: isSelected ? "2px 6px" : "0",
+                    transition: "background-color 0.3s ease",
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!isSelected)
+                      e.currentTarget.style.backgroundColor = "#3a4461";
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!isSelected)
+                      e.currentTarget.style.backgroundColor = "transparent";
+                  }}
+                >
+                  {summary}
+                </span>
+              );
+            }
+          )
         }
       </div>
-      <h3>References</h3>
-      <div className="reference-display">
-        {resultArray?.length > 0 ? (
-          <div>
-            <ul>
-              {resultArray.map((result, key) => (
-                <li key={key}>
-                  {/* <div
-                    key={index}
-                    style={{
-                      marginLeft: "2px",
-                      marginRight: "40px",
-                      fontSize: "0.9rem",
-                      fontWeight: 400,
-                    }}
-                  >
-                    <p>
-                      {result.current} &nbsp;
-                      <a
-                        href="#"
-                        onClick={(e) => {
-                          e.preventDefault(); // Prevent the default navigation behavior of the anchor tag
-                          handleScroll(result.page); // Call the handleScroll function
-                        }}
-                      >
-                        Page {result.page - 2}
-                      </a>
-                    </p>
-                  </div> */}
-                  <div className="collapse bg-base-100 border border-base-300">
-                    <input type="radio" name="my-accordion-1" defaultChecked />
-                    <div className="collapse-title font-semibold">
-                      Page {result.page - 2}
-                    </div>
-                    <div className="collapse-content text-sm">
-                      {result.current}
-                      <a
-                        href="#"
-                        onClick={(e) => {
-                          e.preventDefault(); // Prevent the default navigation behavior of the anchor tag
-                          handleScroll(result.page); // Call the handleScroll function
-                        }}
-                        style={{
-                          marginLeft: "10px",
-                          color: "#4a5568",
-                          textDecoration: "underline",
-                        }}
-                        
-                      >
-                        Navigate
-                      </a>
-                    </div>
-                  </div>
-                </li>
-              ))}
-            </ul>
+      {displayRef ? (
+        <div>
+          <h3>References</h3>
+          <div className="reference-display">
+            {resultArray?.length > 0 ? (
+              <div>
+                <ul>
+                  {resultArray.map((result, key) => (
+                    <li key={key}>
+                      <div className="collapse bg-base-100 border border-base-300">
+                        <input
+                          type="radio"
+                          name="my-accordion-1"
+                          defaultChecked
+                        />
+                        <div className="collapse-title font-semibold">
+                          Page {result.page - 2}
+                        </div>
+                        <div className="collapse-content text-sm">
+                          {result.current}
+                          <a
+                            href="#"
+                            onClick={(e) => {
+                              e.preventDefault(); // Prevent the default navigation behavior of the anchor tag
+                              handleScroll(result.page); // Call the handleScroll function
+                            }}
+                            style={{
+                              marginLeft: "10px",
+                              color: "#4a5568",
+                              textDecoration: "underline",
+                            }}
+                          >
+                            Navigate
+                          </a>
+                        </div>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : (
+              <>
+                <p
+                  style={{
+                    color: "#696b6a",
+                    marginTop: 50,
+                    marginLeft: 80,
+                    fontSize: 20,
+                  }}
+                >
+                  <img
+                    width="30"
+                    height="30"
+                    style={{ marginRight: 5 }}
+                    src="https://img.icons8.com/ios/50/737373/circled-dot.png"
+                    alt="circled-dot"
+                  />{" "}
+                  Select a summary section to view References.
+                </p>
+              </>
+            )}
           </div>
-        ) : (
-          <>
-            <p
-              style={{
-                color: "#696b6a",
-                marginTop: 50,
-                marginLeft: 80,
-                fontSize: 20,
-              }}
-            >
-              <img
-                width="30"
-                height="30"
-                style={{ marginRight: 5 }}
-                src="https://img.icons8.com/ios/50/737373/circled-dot.png"
-                alt="circled-dot"
-              />{" "}
-              Select a summary section to view References.
-            </p>
-          </>
-        )}
-      </div>
+        </div>
+      ) : (
+        <div>
+          <h3>Sentiment Analysis</h3>
+          {positives.length > 0 || negatives.length > 0? <div className="reference-display"><div className="overflow-x-auto">
+            <table className="table">
+              {/* head */}
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Postives</th>
+                  <th>Negatives</th>
+                  
+                </tr>
+              </thead>
+              <tbody>
+                {/* row 1 */}
+                {positives.map((positive, index) => (
+                    <tr key={index}>
+                      <th>{index + 1}</th>
+                      <td>{positive}</td>
+                      <td>
+                        {negatives[index] ? negatives[index] : "No Negatives"}
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          </div></div> : <></>}
+        </div>
+      )}
     </div>
   );
 };

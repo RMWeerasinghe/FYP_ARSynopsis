@@ -94,7 +94,8 @@ export default function Home() {
       <div className="app">
         {pdfFile ? <></> : <div>
           <UploadZone onFileUpload={handleFileUpload} />
-          <div style={{ marginLeft: 600 }}>
+          {/* <span style={{marginLeft:740}}>or</span> */}
+          <div style={{ marginLeft: 600 , marginTop:20}}>
             <FileUploadButton onFileUpload={handleFileUpload} />
           </div>
         </div>}
@@ -147,6 +148,7 @@ export default function Home() {
                     resultArray={resultArray}
                     changePageNumber={setPageNumber}
                     setDivRef={divRef}
+                    displayRef={true}
                   />
                 )
               ) : (

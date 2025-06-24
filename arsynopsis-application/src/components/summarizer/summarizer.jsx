@@ -14,6 +14,8 @@ import FileDetailCard from "../../components/file-detail-card/file-detail-card";
 import "./summarizer.css";
 import { addDocument } from "../../services/document-service";
 import { getCurrentUser } from "@/services/user-service";
+import {v4 as uuidv4} from 'uuid';
+
 
 const Summerizer = () => {
   const [pdfFile, setPdfFile] = useState(null);
@@ -107,19 +109,23 @@ const Summerizer = () => {
     }
   };
 
-  const getPresignedUrl = async (filename, filetype,actiontype) => {
+  const getPresignedUrl = async (filename, filetype, directory ,actiontype) => {
     try {
-      const response = await fetch("http://localhost:8000/get-preassigned-url", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          filename,
-          filetype,
-          actiontype,
-        }),
-      });
+      const response = await fetch(
+        "http://localhost:8000/get-preassigned-url",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            filename,
+            filetype,
+            directory,
+            actiontype,
+          }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to get presigned URL");
@@ -131,10 +137,9 @@ const Summerizer = () => {
       console.error("Error getting presigned URL:", error);
       throw error;
     }
-  }
+  };
 
-  const uploadObject = async (file) => {
-
+  const uploadObject = async (file,uuid,filename) => {
     try {
       if (!file) {
         alert("Please select a file first!");
@@ -142,8 +147,9 @@ const Summerizer = () => {
       }
 
       const preassigned_url = await getPresignedUrl(
-        file.name,
+        filename,
         file.type,
+        uuid,
         "put_object"
       );
 
@@ -171,31 +177,37 @@ const Summerizer = () => {
       console.error("Error during file upload:", error);
       alert("An error occurred while uploading the file. Please try again.");
     }
+  };
 
-  }
-
-  const UploadFile = async () => {
+  const UploadFile = async (unique_id) => {
     try {
       if (!pdfFile) {
         alert("Please select a file first!");
         return;
       }
 
-      
-      await uploadObject(pdfFile);
+       // Generate a unique ID for the file
+
+      await uploadObject(pdfFile,unique_id, unique_id + "_document.pdf");
       console.log("File uploaded successfully:", pdfFile.name);
 
       const summary_data = data;
       const summaryJsonString = JSON.stringify(summary_data, null, 2); // pretty print
-      const summaryBlob = new Blob([summaryJsonString], { type: 'application/json' });
-      
-      const summaryFileName = `${pdfFile.name.split('.')[0]}_summary.json`;
-      const summaryFile = new File([summaryBlob], summaryFileName, { type: '  application/json' });
-      await uploadObject(summaryFile);
+      const summaryBlob = new Blob([summaryJsonString], {
+        type: "application/json",
+      });
 
+      const summaryFileName = `${pdfFile.name.split(".")[0]}_summary.json`;
+      const summaryFile = new File([summaryBlob], summaryFileName, {
+        type: "application/json",
+      });
+      await uploadObject(summaryFile, unique_id,unique_id + "_summary.json");
+
+      return true; // Indicate successful upload
     } catch (error) {
       console.error("Error during file upload:", error);
       alert("An error occurred while uploading the file. Please try again.");
+      return
     }
   };
 
@@ -207,12 +219,25 @@ const Summerizer = () => {
     }
 
     // const response = await UploadFile();
-    if (!response) {
+    // if (!response) {
+    //   console.error("File upload failed, cannot save document details.");
+    //   return;
+    // }
+
+    const unique_id = uuidv4();
+
+    const uploadSuccess = await UploadFile(unique_id);
+    // Check if the upload was successful
+    if (!uploadSuccess) {
       console.error("File upload failed, cannot save document details.");
+      alert("File upload failed, please try again.");
       return;
     }
 
+    console.log("File uploaded successfully, now saving document details...");
+
     const documentData = {
+      doc_id : unique_id,
       company_name: documentDetails.company_name,
       category: documentDetails.category,
       doc_name: documentDetails.doc_name,
@@ -228,6 +253,7 @@ const Summerizer = () => {
       document.getElementById("my_modal_1").close();
     } catch (error) {
       console.error("Error saving document details:", error);
+      alert("Failed to save document details. Please try again.");
     }
   };
 
@@ -319,7 +345,7 @@ const Summerizer = () => {
               <button
                 className="btn btn-primary"
                 type="submit"
-                onClick={UploadFile}
+                onClick={handleFileSave}
               >
                 Save
               </button>
@@ -337,7 +363,7 @@ const Summerizer = () => {
 
       <div className="app">
         {loadingState ? (
-          <div style={{ width: "80%" }}>
+          <div style={{ width: 800 ,marginRight:200}}>
             <UploadZone onFileUpload={handleFileUpload} />
           </div>
         ) : (
@@ -429,7 +455,7 @@ const Summerizer = () => {
           </div>
         )}
 
-        <div className="main-container">
+        {pdfFile ? <div className="main-container">
           <div className="left-panel" style={{ width: 600 }}>
             {pdfFile ? (
               <PdfViewer
@@ -476,15 +502,14 @@ const Summerizer = () => {
                   resultArray={resultArray}
                   changePageNumber={setPageNumber}
                   setDivRef={divRef}
+                  displayRef={true}
                 />
               )
             ) : (
-              <div style={{ padding: 20, fontSize: 18, color: "#aaa" }}>
-                Upload a PDF to see the summary here.
-              </div>
+              <></>
             )}
           </div>
-        </div>
+        </div> : <></>}
       </div>
     </div>
   );

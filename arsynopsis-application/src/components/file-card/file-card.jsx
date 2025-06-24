@@ -2,7 +2,7 @@ import React from "react";
 import pdfImg from "../../assets/pdf.png";
 import Image from "next/image";
 
-const FileCard = ({company_name,category}) => {
+const FileCard = ({company_name,doc_id,category,doc_name,onDocumentSelect}) => {
   return (
     <div>
       <li className="list-row flex items-center gap-4" style={{ width: 800 }}>
@@ -16,7 +16,7 @@ const FileCard = ({company_name,category}) => {
           </div>
         </div>
         {/* View/Open (Eye) Icon */}
-        <button className="btn btn-square btn-ghost">
+        <button className="btn btn-square btn-ghost" onClick={() => {console.log("View button Clicked");onDocumentSelect(doc_id,doc_name)}}>
           <svg
             className="size-[1.2em]"
             xmlns="http://www.w3.org/2000/svg"
